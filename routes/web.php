@@ -11,10 +11,10 @@ Route::get('/admin', [ProductController::class, 'admin'])->name('admin');
 
 // Məhsul Əməliyyatları
 Route::post('/admin/add', [ProductController::class, 'store'])->name('product.store');
-// Bura GET etdik:
-Route::get('/admin/delete/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+// Məhsul silmə (Blade-də form və DELETE metodudursa, belə qalmalıdır):
+Route::delete('/admin/delete/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
 
 // İşçi Əməliyyatları
 Route::post('/admin/employee', [ProductController::class, 'storeEmployee'])->name('employee.store');
-// Bura da GET etdik:
-Route::get('/admin/employee/delete/{id}', [ProductController::class, 'destroyEmployee'])->name('employee.destroy');
+// İşçi silmə (Blade-də form və DELETE metodudursa, belə qalmalıdır):
+Route::delete('/admin/employee/{id}', [ProductController::class, 'destroyEmployee'])->name('employee.destroy');
