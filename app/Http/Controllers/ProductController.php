@@ -29,7 +29,7 @@ class ProductController extends Controller
    
 
 public function store(Request $request) {
-    // 1. Doğrulama hissəsi eyni qalır
+    // 1. Doğrulama (Validate) hissəsi eyni qalır...
     $request->validate([
         'name' => 'required',
         'price' => 'required|numeric|min:0',
@@ -37,15 +37,18 @@ public function store(Request $request) {
         'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
     ]);
 
-    // 2. Şəkli Render-in yaddaşına yox, CLOUDINARY-yə göndəririk 🚀
-    $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+    // 2. İNDİ BU KODU BURAYA YAPIŞDIR 🚀
+    // Bu sətir şəkli Cloudinary-də "products" adlı qovluğa yükləyir
+    $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath(), [
+        'folder' => 'products'
+    ])->getSecurePath();
 
-    // 3. Bazaya yazırıq ($path yerinə $uploadedFileUrl yazırıq)
+    // 3. Bazaya yazırıq
     Product::create([
         'name' => $request->name,
         'price' => $request->price,
         'type' => $request->type,
-        'image' => $uploadedFileUrl, // Artıq bazada "https://res.cloudinary.com/..." linki olacaq
+        'image' => $uploadedFileUrl, // Bura artıq buluddakı link yazılır
         'in_stock' => $request->has('in_stock') ? 1 : 0,
     ]);
 
