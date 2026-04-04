@@ -29,22 +29,18 @@ class ProductController extends Controller
    
 
 public function store(Request $request) {
-    $request->validate([
-        'name' => 'required',
-        'price' => 'required|numeric|min:0',
-        'type' => 'required',
-        'image' => 'required|image|max:2048',
-    ]);
-
     try {
-        // Şəkli Cloudinary-yə birbaşa göndəririk
-        $upload = Cloudinary::upload($request->file('image')->getRealPath(), [
-            'folder' => 'products'
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'type' => 'required',
+            'image' => 'required|image',
         ]);
-        
-        $uploadedFileUrl = $upload->getSecurePath();
 
-        // Məlumatları bazaya yazırıq
+        $uploadedFileUrl = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload(
+            $request->file('image')->getRealPath()
+        )->getSecurePath();
+
         \App\Models\Product::create([
             'name' => $request->name,
             'price' => $request->price,
@@ -53,11 +49,11 @@ public function store(Request $request) {
             'in_stock' => $request->has('in_stock') ? 1 : 0,
         ]);
 
-        return redirect()->back()->with('success', 'Məhsul yükləndi! 🌸');
+        return redirect()->back()->with('success', 'Oldu! 🌸');
 
     } catch (\Exception $e) {
-        // Əgər nəsə səhv olsa, bizə səhvi göstərsin (500 əvəzinə)
-        return back()->withErrors(['error' => 'Xəta baş verdi: ' . $e->getMessage()]);
+        // Bu sətir 500 xətası əvəzinə bizə xətanın adını yazacaq
+        return dd($e->getMessage()); 
     }
 }
 
