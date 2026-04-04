@@ -29,30 +29,36 @@ class ProductController extends Controller
    
 
 public function store(Request $request) {
-    // 1. Doğrulama (Validate) hissəsi eyni qalır...
     $request->validate([
         'name' => 'required',
         'price' => 'required|numeric|min:0',
         'type' => 'required',
-        'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
+        'image' => 'required|image|max:2048',
     ]);
 
-    // 2. İNDİ BU KODU BURAYA YAPIŞDIR 🚀
-    // Bu sətir şəkli Cloudinary-də "products" adlı qovluğa yükləyir
-    $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath(), [
-        'folder' => 'products'
-    ])->getSecurePath();
+    try {
+        // Şəkli Cloudinary-yə birbaşa göndəririk
+        $upload = Cloudinary::upload($request->file('image')->getRealPath(), [
+            'folder' => 'products'
+        ]);
+        
+        $uploadedFileUrl = $upload->getSecurePath();
 
-    // 3. Bazaya yazırıq
-    Product::create([
-        'name' => $request->name,
-        'price' => $request->price,
-        'type' => $request->type,
-        'image' => $uploadedFileUrl, // Bura artıq buluddakı link yazılır
-        'in_stock' => $request->has('in_stock') ? 1 : 0,
-    ]);
+        // Məlumatları bazaya yazırıq
+        \App\Models\Product::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'type' => $request->type,
+            'image' => $uploadedFileUrl,
+            'in_stock' => $request->has('in_stock') ? 1 : 0,
+        ]);
 
-    return redirect()->back()->with('success', 'Məhsul ömürlük yadda saxlanıldı! 🌸');
+        return redirect()->back()->with('success', 'Məhsul yükləndi! 🌸');
+
+    } catch (\Exception $e) {
+        // Əgər nəsə səhv olsa, bizə səhvi göstərsin (500 əvəzinə)
+        return back()->withErrors(['error' => 'Xəta baş verdi: ' . $e->getMessage()]);
+    }
 }
 
 
