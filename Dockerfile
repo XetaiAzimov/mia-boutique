@@ -34,5 +34,8 @@ RUN chown -R www-data:www-data /var/www/html \
 # Paketləri yüklə
 RUN composer update --no-dev --optimize-autoloader
 
+RUN php artisan config:clear
+RUN php artisan cache:clear
+
 # 🚀 BAZANI AVTOMATİK QURMAQ VƏ SERVİSİ BAŞLATMAQ
 CMD php artisan migrate --force && php artisan storage:link && apache2-foreground
