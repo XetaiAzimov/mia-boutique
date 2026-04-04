@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Sistem paketləri və kitabxanalar
+# Sistem paketləri
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -11,30 +11,28 @@ RUN apt-get update && apt-get install -y \
     git \
     curl
 
-# PHP uzantıları (PostgreSQL və MySQL dəstəyi ilə)
+# PHP uzantıları
 RUN docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
-# Apache-ni Laravel üçün kökləyirik
+# Apache Ayarları
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 RUN a2enmod rewrite
 
-# Composer-i rəsmi imicdən götürürük
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Layihə fayllarını köçürürük
 WORKDIR /var/www/html
 COPY . .
 
-# Lazımi qovluqlara icazə veririk
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# 🚨 ÇOX VACİB: İcazələri tam veririk (500 xətası buna görə olur)
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Paketləri yükləyirik
+# Paketləri yüklə
 RUN composer install --no-dev --optimize-autoloader
 
-# Bazanı avtomatik miqrasiya etmək üçün
-CMD php artisan migrate --force && apache2-foreground
-
-# Portu 80 olaraq təyin edirik
-EXPOSE 80
+# 🚀 BAZANI AVTOMATİK QURMAQ VƏ SERVİSİ BAŞLATMAQ
+CMD php artisan migrate --force && php artisan storage:link && apache2-foreground
