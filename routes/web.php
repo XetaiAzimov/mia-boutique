@@ -17,4 +17,5 @@ Route::delete('/admin/delete/{id}', [ProductController::class, 'destroy'])->name
 // İşçi Əməliyyatları
 Route::post('/admin/employee', [ProductController::class, 'storeEmployee'])->name('employee.store');
 // İşçi silmə (Blade-də form və DELETE metodudursa, belə qalmalıdır):
+// İşçi Silmək (Mütləq 'delete' metodu və düzgün funksiya adı ilə)
 Route::delete('/admin/employee/{id}', [ProductController::class, 'destroyEmployee'])->name('employee.destroy');
