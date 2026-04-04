@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -25,8 +26,7 @@ class ProductController extends Controller
     return view('admin', compact('products', 'employees'));
 }
 
-   // 1. Faylın ən yuxarısına (namespace-dən sonra) bunu əlavə etməyi unutma:
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+   
 
 public function store(Request $request) {
     // 1. Doğrulama hissəsi eyni qalır
