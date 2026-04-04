@@ -82,9 +82,9 @@
     <div class="product-card group bg-white rounded-[1.5rem] overflow-hidden border border-pink-50/50 shadow-sm transition-all hover:shadow-md {{ !$product->in_stock ? 'opacity-75' : '' }}" data-type="{{ $product->type }}">
         
         <div class="relative overflow-hidden aspect-[4/5]">
-            <img src="{{ asset('storage/' . $product->image) }}" 
-                 alt="{{ $product->name }}"
-                 class="w-full h-full object-cover group-hover:scale-110 transition duration-700 {{ !$product->in_stock ? 'grayscale' : '' }}">
+            <img src="{{ $product->image }}" 
+     alt="{{ $product->name }}"
+     class="w-full h-full object-cover group-hover:scale-110 transition duration-700 {{ !$product->in_stock ? 'grayscale' : '' }}">
             
             @if(!$product->in_stock)
                 <div class="absolute inset-0 flex items-center justify-center bg-black/5 backdrop-blur-[1px]">
