@@ -33,5 +33,8 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Paketləri yükləyirik
 RUN composer install --no-dev --optimize-autoloader
 
+# Bazanı avtomatik miqrasiya etmək üçün
+CMD php artisan migrate --force && apache2-foreground
+
 # Portu 80 olaraq təyin edirik
 EXPOSE 80
