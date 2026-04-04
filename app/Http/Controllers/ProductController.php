@@ -75,7 +75,10 @@ public function store(Request $request) {
         }
 
         public function destroyEmployee($id) {
-            \App\Models\Employee::findOrFail($id)->delete();
-            return redirect()->back()->with('success', 'İşçi siyahıdan çıxarıldı!');
-        }
+    $employee = \App\Models\Employee::find($id);
+    if ($employee) {
+        $employee->delete();
+    }
+    return redirect()->back()->with('success', 'İşçi silindi!');
+}
 }
