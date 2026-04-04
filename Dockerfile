@@ -39,4 +39,4 @@ RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
 
 # 🚀 BAZANI AVTOMATİK QURMAQ VƏ SERVİSİ BAŞLATMAQ
-CMD php artisan migrate --force && php artisan storage:link && apache2-foreground
+CMD touch database/database.sqlite && php artisan migrate --force && php artisan storage:link && apache2-foreground
