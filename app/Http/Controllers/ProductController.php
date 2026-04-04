@@ -25,8 +25,11 @@ class ProductController extends Controller
     return view('admin', compact('products', 'employees'));
 }
 
-   public function store(Request $request) {
-    // 1. Öncə ancaq lazım olan sahələri doğrulayırıq
+   // 1. Faylın ən yuxarısına (namespace-dən sonra) bunu əlavə etməyi unutma:
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
+public function store(Request $request) {
+    // 1. Doğrulama hissəsi eyni qalır
     $request->validate([
         'name' => 'required',
         'price' => 'required|numeric|min:0',
@@ -34,19 +37,19 @@ class ProductController extends Controller
         'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
     ]);
 
-    // 2. Şəkli yadda saxlayırıq
-    $path = $request->file('image')->store('products', 'public');
+    // 2. Şəkli Render-in yaddaşına yox, CLOUDINARY-yə göndəririk 🚀
+    $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
 
-    // 3. İNDİ bazaya yazırıq (in_stock-u burada təyin edirik)
+    // 3. Bazaya yazırıq ($path yerinə $uploadedFileUrl yazırıq)
     Product::create([
         'name' => $request->name,
         'price' => $request->price,
         'type' => $request->type,
-        'image' => $path,
-        'in_stock' => $request->has('in_stock') ? 1 : 0, // Bu hissə validate-dən kənarda olmalıdır
+        'image' => $uploadedFileUrl, // Artıq bazada "https://res.cloudinary.com/..." linki olacaq
+        'in_stock' => $request->has('in_stock') ? 1 : 0,
     ]);
 
-    return redirect()->back()->with('success', 'Məhsul uğurla əlavə edildi! 🌸');
+    return redirect()->back()->with('success', 'Məhsul ömürlük yadda saxlanıldı! 🌸');
 }
 
 
