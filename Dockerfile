@@ -38,5 +38,8 @@ RUN composer update --no-dev --optimize-autoloader
 RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
 
-# 🚀 BAZANI AVTOMATİK QURMAQ VƏ SERVİSİ BAŞLATMAQ
-CMD touch database/database.sqlite && php artisan migrate --force && php artisan storage:link && apache2-foreground
+# SQLite faylını yaradır, icazələri verir və miqrasiya edir
+CMD touch database/database.sqlite && \
+    chmod -R 775 database storage && \
+    php artisan migrate --force && \
+    php artisan serve --host=0.0.0.0 --port=$PORT
